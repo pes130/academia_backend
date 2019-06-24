@@ -11,7 +11,8 @@ class ProfesorModel(db.Model):
     email = db.Column(db.String(150))
     direccion = db.Column(db.String(300))
 
-    grupos = db.relationship('GrupoModel', backref='profesor', lazy='dynamic') 
+    #grupos = db.relationship('GrupoModel', backref='profesor', lazy='dynamic') 
+    grupos = db.relationship('GrupoModel', lazy='dynamic') 
 
     def __init__(self, nombre, apellido1, apellido2, dni, telefono, email, direccion):
         self.nombre = nombre
@@ -33,7 +34,7 @@ class ProfesorModel(db.Model):
             'telefono': self.telefono,
             'email': self.email,
             'direccion': self.direccion,
-            'grupos': [grupo.json() for grupo in self.grupos.all()]
+            'grupos': [grupo.id for grupo in self.grupos.all()]
         }
 
     @classmethod

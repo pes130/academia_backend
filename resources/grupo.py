@@ -77,5 +77,12 @@ class GrupoNuevo(Resource, GrupoGenerico):
     
 
 class GruposList(Resource):
-    def get(self):
-        return {'grupos': [grupo.json() for grupo in GrupoModel.query.all()]}
+    # def get(self):
+    #     return {'grupos': [grupo.json() for grupo in GrupoModel.query.all()]}
+
+    def get(self, curso=None):
+        if not curso:
+            return {'grupos': [grupo.json() for grupo in GrupoModel.query.all()]}
+        else:
+            grupos = GrupoModel.find_by_curso(curso)
+            return {'grupos': [grupo.json() for grupo in grupos.all()]}

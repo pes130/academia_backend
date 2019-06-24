@@ -8,6 +8,7 @@ class MatriculaModel(db.Model):
     __tablename__ = 'matriculas'
     alumno_id = db.Column(db.Integer, db.ForeignKey('alumnos.id'), primary_key=True)
     grupo_id = db.Column(db.Integer, db.ForeignKey('grupos.id'), primary_key=True)
+    activa = db.Column(db.Boolean)
     septiembre = db.Column(db.Float(precision=2))
     octubre = db.Column(db.Float(precision=2))
     noviembre = db.Column(db.Float(precision=2))
@@ -25,6 +26,7 @@ class MatriculaModel(db.Model):
     def __init__(self, alumno_id, grupo_id):
         self.alumno_id = alumno_id
         self.grupo_id = grupo_id
+        self.activa = True
        
     @classmethod
     def find_by_id_alumno_grupo(cls, alumno_id, grupo_id):
@@ -35,6 +37,7 @@ class MatriculaModel(db.Model):
         return {
             'alumno_id': self.alumno_id,
             'grupo_id': self.grupo_id,
+            'activa': self.activa,
             'septiembre': self.septiembre,
             'octubre': self.octubre,
             'noviembre': self.noviembre,

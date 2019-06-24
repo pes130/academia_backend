@@ -28,7 +28,7 @@ class GrupoModel(db.Model):
             'indicaciones': self.indicaciones,
             'profesor_id': self.profesor_id,
             'alumnos_matriculados': [alumno.json() for alumno in self.alumnos_matriculados.all()]
-        }
+    }
 
     @classmethod
     def find_by_id(cls, id):
@@ -37,6 +37,10 @@ class GrupoModel(db.Model):
     @classmethod
     def find_by_nombre(cls, nombre):
         return GrupoModel.query.filter_by(nombre=nombre).first()
+
+    @classmethod
+    def find_by_curso(cls, curso):
+        return GrupoModel.query.filter_by(curso=curso)
     
     def save_to_db(self):
         db.session.add(self)

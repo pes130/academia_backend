@@ -14,6 +14,9 @@ class MatriculaGenerica():
         required=True,
         help="El campo 'grupo_id' es obligatorio"
     )
+    parser.add_argument('activa',
+        type=bool
+    )
     parser.add_argument('septiembre',
         type=float
     )
@@ -65,6 +68,7 @@ class Matricula(Resource, MatriculaGenerica):
         if matricula is None:
             return {'message': 'Matrícula de alumno no encontrada '}, 404
         else:
+            matricula.activa = data['activa']
             matricula.septiembre = data['septiembre']
             matricula.octubre = data['octubre']
             matricula.noviembre = data['noviembre']
