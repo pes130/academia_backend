@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.grupo import GrupoModel
+from flask_jwt_extended import jwt_required, fresh_jwt_required
 
 
 class GrupoGenerico:
@@ -28,12 +29,14 @@ class GrupoGenerico:
     )
 
 class Grupo(Resource, GrupoGenerico):
+    @jwt_required
     def get(self, id):
         grupo = GrupoModel.find_by_id(id)
         if grupo:
             return grupo.json()
         return {'message': 'Grupo no encontrado'}, 404
 
+    @fresh_jwt_required
     def put(self, id):
         data = Grupo.parser.parse_args()
         grupo = GrupoModel.find_by_id(id)
@@ -49,6 +52,7 @@ class Grupo(Resource, GrupoGenerico):
             grupo.save_to_db()
             return grupo.json()
 
+    @fresh_jwt_required
     def delete(self, id):
         grupo = GrupoModel.find_by_id(id)
         if grupo:
@@ -57,6 +61,8 @@ class Grupo(Resource, GrupoGenerico):
 
     
 class GrupoNuevo(Resource, GrupoGenerico):
+    
+    @fresh_jwt_required
     def post(self):
         data = GrupoNuevo.parser.parse_args()
         grupo = GrupoModel.find_by_nombre(data['nombre'])
@@ -77,9 +83,7 @@ class GrupoNuevo(Resource, GrupoGenerico):
     
 
 class GruposList(Resource):
-    # def get(self):
-    #     return {'grupos': [grupo.json() for grupo in GrupoModel.query.all()]}
-
+    @jwt_required
     def get(self, curso=None):
         if not curso:
             return {'grupos': [grupo.json() for grupo in GrupoModel.query.all()]}

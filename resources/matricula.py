@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.matricula import MatriculaModel
+from flask_jwt_extended import jwt_required, fresh_jwt_required
 
 
 class MatriculaGenerica():
@@ -49,19 +50,22 @@ class MatriculaGenerica():
     )
 
 class Matricula(Resource, MatriculaGenerica):
+    
+    @jwt_required
     def get(self, grupo_id, alumno_id):
         matricula = MatriculaModel.find_by_id_alumno_grupo(alumno_id, grupo_id)
         if matricula:
             return matricula.json()
         return {'message': 'Matrícula no encontrada'}, 404
 
+    @fresh_jwt_required
     def delete(self, grupo_id, alumno_id):
         matricula = MatriculaModel.find_by_id_alumno_grupo(alumno_id, grupo_id)
         if matricula:
             matricula.delete_from_db()
         return {'message':'Matricula borrada'}
 
-
+    @fresh_jwt_required
     def put(self, grupo_id, alumno_id):
         data = Matricula.parser.parse_args()
         matricula = MatriculaModel.find_by_id_alumno_grupo(alumno_id, grupo_id)
@@ -84,6 +88,7 @@ class Matricula(Resource, MatriculaGenerica):
 
 
 class MatriculaNueva(Resource, MatriculaGenerica):
+    @fresh_jwt_required
     def post(self):
         data = MatriculaNueva.parser.parse_args()
 
@@ -102,6 +107,7 @@ class MatriculaNueva(Resource, MatriculaGenerica):
 
 
 class MatriculasList(Resource):
+    @jwt_required
     def get(self):
         return {'matriculas': [matricula.json() for matricula in MatriculaModel.query.all()]}
 

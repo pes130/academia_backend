@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.profesor import ProfesorModel
+from flask_jwt_extended import jwt_required, fresh_jwt_required
 
 
 class ProfesorGenerico():
@@ -35,12 +36,14 @@ class ProfesorGenerico():
 
 
 class Profesor(Resource, ProfesorGenerico):
+    @jwt_required
     def get(self, id):
         profesor = ProfesorModel.find_by_id(id)
         if profesor:
             return profesor.json()
         return {'message': 'Profesor no encontrado'}, 404
     
+    @fresh_jwt_required
     def put(self, id):
         data = Profesor.parser.parse_args()
         profesor = ProfesorModel.find_by_id(id)
@@ -58,6 +61,7 @@ class Profesor(Resource, ProfesorGenerico):
             profesor.save_to_db()
             return profesor.json()
     
+    @fresh_jwt_required
     def delete(self, id):
         profesor = ProfesorModel.find_by_id(id)
         if profesor:
@@ -65,6 +69,7 @@ class Profesor(Resource, ProfesorGenerico):
         return {'message':'Profesor borrado'}
 
 class ProfesorNuevo(Resource, ProfesorGenerico):
+    @fresh_jwt_required
     def post(self):
         data = ProfesorNuevo.parser.parse_args()
         if ProfesorModel.find_by_dni(data['dni']):
@@ -85,5 +90,6 @@ class ProfesorNuevo(Resource, ProfesorGenerico):
         return profesor.json(), 201  
 
 class ProfesoresList(Resource):
+    @jwt_required
     def get(self):
         return {'profesores': [profesor.json() for profesor in ProfesorModel.query.all()]}

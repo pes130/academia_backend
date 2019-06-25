@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.alumno import AlumnoModel
+from flask_jwt_extended import jwt_required, fresh_jwt_required
 from datetime import datetime
 
 
@@ -56,12 +57,14 @@ class AlumnoRequestGenerico:
 
 # Request para paths al que se le añade el id del alumno
 class Alumno(AlumnoRequestGenerico, Resource): 
+    @jwt_required
     def get(self, id):
         alumno = AlumnoModel.find_by_id(id)
         if alumno:
             return alumno.json()
         return {'message': 'Alumno no encontrado'}, 404
 
+    @fresh_jwt_required
     def put(self, id):
         data = Alumno.parser.parse_args()
         alumno = AlumnoModel.find_by_id(id)
@@ -84,6 +87,7 @@ class Alumno(AlumnoRequestGenerico, Resource):
             alumno.save_to_db()
             return alumno.json()
 
+    @fresh_jwt_required
     def delete(self, id):
         alumno = AlumnoModel.find_by_id(id)
         if alumno:
@@ -92,6 +96,8 @@ class Alumno(AlumnoRequestGenerico, Resource):
 
 # Para los alumnos nuevos no sabemos su id, así que creamos un recurso nuevo
 class AlumnoNuevo(AlumnoRequestGenerico, Resource):
+    
+    @fresh_jwt_required
     def post(self):
         data = AlumnoNuevo.parser.parse_args()
         if AlumnoModel.find_by_dni(data['dni']):
@@ -113,5 +119,7 @@ class AlumnoNuevo(AlumnoRequestGenerico, Resource):
     
 
 class AlumnosList(Resource):
+    
+    @jwt_required
     def get(self):
         return {'alumnos': [alumno.json() for alumno in AlumnoModel.query.all()]}
