@@ -33,6 +33,9 @@ class ProfesorGenerico():
     parser.add_argument('direccion',
         type=str
     )
+    parser.add_argument('imagen',
+        type=str
+    )
 
 
 class Profesor(Resource, ProfesorGenerico):
@@ -57,6 +60,8 @@ class Profesor(Resource, ProfesorGenerico):
             profesor.dni = data['dni']        
             profesor.telefono = data['telefono']
             profesor.email = data['email']
+            if data['imagen']:
+                profesor.imagen = data['imagen']
             profesor.direccion = data['direccion']
             profesor.save_to_db()
             return profesor.json()
@@ -81,7 +86,8 @@ class ProfesorNuevo(Resource, ProfesorGenerico):
                         data['dni'], 
                         data['telefono'], 
                         data['email'], 
-                        data['direccion']
+                        data['direccion'],
+                        data['imagen']
         )
         try:
             profesor.save_to_db()

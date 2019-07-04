@@ -10,18 +10,20 @@ class ProfesorModel(db.Model):
     telefono = db.Column(db.String(50))   
     email = db.Column(db.String(150))
     direccion = db.Column(db.String(300))
+    imagen = db.Column(db.String(300))
 
     #grupos = db.relationship('GrupoModel', backref='profesor', lazy='dynamic') 
     grupos = db.relationship('GrupoModel', lazy='dynamic') 
 
-    def __init__(self, nombre, apellido1, apellido2, dni, telefono, email, direccion):
+    def __init__(self, nombre, apellido1, apellido2, dni, telefono, email, direccion, imagen=None):
         self.nombre = nombre
         self.apellido1 = apellido1
         self.apellido2 = apellido2
         self.dni = dni
         self.telefono = telefono
         self.email = email
-        self.direccion = direccion    
+        self.direccion = direccion
+        self.imagen = imagen
     
     def json(self):
         # devuelves un diccionario
@@ -34,7 +36,8 @@ class ProfesorModel(db.Model):
             'telefono': self.telefono,
             'email': self.email,
             'direccion': self.direccion,
-            'grupos': [grupo.id for grupo in self.grupos.all()]
+            'imagen': self.imagen,
+            'grupos': [ProfesorModel._crear_grupo_reducido(grupo) for grupo in self.grupos.all()]
         }
 
     @classmethod
@@ -56,6 +59,15 @@ class ProfesorModel(db.Model):
     @classmethod
     def find_by_apellido2(cls, apellido2):
         return ProfesorModel.query.filter_by(apellido2=apellido2)
+
+    @classmethod
+    def _crear_grupo_reducido(cls, grupo):
+        return {
+            'id': grupo.id,
+            'nombre': grupo.nombre, 
+            'curso': grupo.curso
+        }
+
 
     def save_to_db(self):
         db.session.add(self)

@@ -70,11 +70,13 @@ class UserLogin(Resource):
 
             return {
                     "access_token": access_token,
-                    "refresh_token": refresh_token
+                    "refresh_token": refresh_token,
+                    "code": 200
                 }, 200
 
         return {
-                "message": "Invalid credentials!"
+                "message": "Invalid credentials!",
+                "code": 401
             }, 401
 
 class TokenRefresh(Resource):
@@ -83,7 +85,8 @@ class TokenRefresh(Resource):
         current_user_id = get_jwt_identity()  # Gets Identity from JWT
         new_token = create_access_token(identity=current_user_id, fresh=False)
         return {
-                "access_token": new_token
+                "access_token": new_token,
+                "code": 200
             }, 200
 
 class TokenExpire(Resource):
@@ -93,7 +96,8 @@ class TokenExpire(Resource):
         token2Add = BlacklistModel(jti)
         token2Add.save_to_db()
         return {
-                "message": "Successfully logged out"
+                "message": "Successfully logged out",
+                "code": 200
             }, 200
 
 

@@ -7,6 +7,7 @@ from resources.alumno import Alumno, AlumnosList, AlumnoNuevo
 from resources.profesor import Profesor, ProfesoresList, ProfesorNuevo
 from resources.grupo import Grupo, GruposList, GrupoNuevo
 from resources.matricula import Matricula, MatriculasList, MatriculaNueva
+from resources.uploads import UploadImage
 from security import authenticate, identity
 from flask_cors import CORS
 
@@ -46,8 +47,8 @@ def expired_token_callback():
         {
             "description": "Token has expired!",
             "error": "token_expired"
-        }, 401
-    )
+    }), 401
+    
 
 @jwt.invalid_token_loader
 def invalid_token_callback():
@@ -55,8 +56,8 @@ def invalid_token_callback():
         {
             "description": "Signature verification failed!",
             "error": "invalid_token"
-        }, 401
-    )
+    }), 401
+    
 
 
 @jwt.unauthorized_loader
@@ -65,8 +66,8 @@ def unauthorized_loader_callback(error):
         {
             "description": "Access token not found!",
             "error": "unauthorized_loader"
-        }, 401
-    )
+    }), 401
+    
 
 
 @jwt.needs_fresh_token_loader
@@ -74,9 +75,9 @@ def fresh_token_loader_callback():
     return jsonify(
         {
             "description": "Token is not fresh. Fresh token needed!",
-            "error": "needs_fresh_token"
-        }, 401
-    )
+            "error": "needs_fresh_token",
+            "code": 401
+    }), 401
 
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserRegister, "/auth/register")
@@ -97,6 +98,7 @@ api.add_resource(GruposList,'/grupos','/grupos/<string:curso>')
 api.add_resource(Matricula,'/matricula/<int:grupo_id>/<int:alumno_id>')
 api.add_resource(MatriculasList,'/matriculas')
 api.add_resource(MatriculaNueva,'/matricula')
+api.add_resource(UploadImage,'/upload/image')
 
 
 
